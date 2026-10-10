@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liquid Glass Studio — CSS generator for the iOS 26 liquid glass effect</title>
+  <meta name="description" content="Design Apple's iOS 26 'Liquid Glass' effect visually: blur, refraction, specular highlights, tints. Copy production-ready CSS or Tailwind classes in one click. Free & open source." />
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Liquid Glass Studio" />
+  <meta property="og:description" content="Design the iOS 26 liquid glass effect visually — copy the CSS in one click." />
+  <meta property="og:image" content="assets/social-banner.png" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ══════════════ Header ══════════════ -->
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="Liquid Glass Studio logo" class="brand-logo" />
+      <div>
+        <h1 class="brand-name">Liquid Glass Studio</h1>
+        <p class="brand-tag">iOS 26 liquid glass → CSS, in one click</p>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a href="#how-it-works">How it works</a>
+      <a href="https://github.com/hilsetapp/liquid-glass-studio" target="_blank" rel="noopener">
+        GitHub <span class="star">★</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- ══════════════ Presets ══════════════ -->
+  <section class="presets" aria-label="Presets">
+    <span class="presets-label">Presets:</span>
+    <div id="preset-list" class="preset-list"><!-- filled by app.js --></div>
+    <button id="btn-random" class="btn ghost" type="button" title="Randomize all sliders">🎲 Surprise me</button>
+  </section>
+
+  <!-- ══════════════ Workspace ══════════════ -->
+  <main class="workspace">
+
+    <!-- Controls -->
+    <aside class="controls" aria-label="Glass controls">
+      <h2>Controls</h2>
+      <div id="control-list"><!-- sliders built by app.js --></div>
+
+      <div class="control-row">
+        <label for="ctl-tint">
+          Tint color
+          <span class="hint">the color of the "glass" itself</span>
+        </label>
+        <input type="color" id="ctl-tint" value="#ffffff" />
+      </div>
+
+      <label class="control-row checkbox">
+        <input type="checkbox" id="ctl-refraction" />
+        <span>
+          Edge refraction <em>(experimental)</em>
+          <span class="hint">bends light at the edges via an SVG filter — Safari / Chrome&nbsp;✓-flagged</span>
+        </span>
+      </label>
+
+      <div class="control-row">
+        <label>
+          Preview background
+          <span class="hint">glass is only visible over content — try your own image</span>
+        </label>
+        <div class="bg-buttons">
+          <button class="btn ghost small" type="button" data-bg="blobs">Blobs</button>
+          <button class="btn ghost small" type="button" data-bg="sunset">Sunset</button>
+          <label class="btn ghost small" for="bg-upload">Upload…</label>
+          <input type="file" id="bg-upload" accept="image/*" hidden />
+        </div>
+      </div>
+
+      <button id="btn-export" class="btn primary" type="button">Get the code ⚡</button>
+    </aside>
+
+    <!-- Live preview -->
+    <section class="preview" aria-label="Live preview">
+      <div id="preview-area" class="preview-area">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div id="bg-image" class="bg-image" hidden></div>
+
+        <!-- the draggable glass panel -->
+        <div id="glass-card" class="glass-card" role="img" aria-label="Liquid glass sample panel. Drag me around!">
+          <div class="glass-card-inner">
+            <div class="demo-avatar"></div>
+            <div class="demo-text">
+              <strong>Liquid Glass</strong>
+              <span>drag me across the colors</span>
+            </div>
+            <div class="demo-pill">Active</div>
+          </div>
+          <div class="glass-card-row">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <p class="drag-hint">↔ drag the panel — watch the glass bend the light</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════════ Export panel ══════════════ -->
+  <section id="export-panel" class="export-panel" hidden>
+    <div class="export-head">
+      <h2>Your code</h2>
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="css" role="tab" type="button">CSS</button>
+        <button class="tab" data-tab="tailwind" role="tab" type="button">Tailwind</button>
+        <button class="tab" data-tab="filter" role="tab" type="button" id="tab-filter">SVG filter</button>
+      </div>
+    </div>
+    <p id="export-note" class="export-note"></p>
+    <div class="code-wrap">
+      <pre><code id="export-code"></code></pre>
+      <button id="btn-copy" class="btn primary small copy-btn" type="button">Copy</button>
+    </div>
+  </section>
+
+  <!-- ══════════════ How it works ══════════════ -->
+  <section id="how-it-works" class="how">
+    <h2>How the effect works (in plain words)</h2>
+    <div class="how-grid">
+      <article>
+        <h3>1. Frosting — <code>backdrop-filter</code></h3>
+        <p>The glass blurs and saturates whatever is <em>behind</em> it, not itself.
+        One line of CSS does the frosting: <code>backdrop-filter: blur(16px) saturate(160%)</code>.
+        Without something colorful behind the panel the effect is invisible — that's why the
+        preview has moving blobs.</p>
+      </article>
+      <article>
+        <h3>2. The glass body — translucent tint</h3>
+        <p>A semi-transparent <code>background</code> color is the "material" of the glass.
+        iOS uses almost-white with ~10–25% alpha. More alpha = milkier glass.</p>
+      </article>
+      <article>
+        <h3>3. Light edges — inset shadows</h3>
+        <p>Thin <code>inset</code> white shadows on top and bottom fake the way a real glass edge
+        catches light. That 1-pixel highlight is what makes it feel "solid" instead of flat.</p>
+      </article>
+      <article>
+        <h3>4. Refraction — SVG displacement <em>(optional)</em></h3>
+        <p>Real glass bends light at rounded edges. We approximate it with an SVG
+        <code>feDisplacementMap</code> filter referenced from <code>backdrop-filter: url(#…)</code>.
+        It's the cherry on top — the effect looks great without it too.</p>
+      </article>
+    </div>
+    <p class="how-footer">
+      Browser support: <code>backdrop-filter</code> works in all modern browsers.
+      The refraction filter currently works in Safari and in Chrome with experimental web features —
+      our generated CSS degrades gracefully where unsupported.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <p>Open source under MIT · made with ☕ by
+      <a href="https://github.com/hilsetapp" target="_blank" rel="noopener">hilsetapp</a>
+      · if it saved you time, <a href="https://github.com/hilsetapp/liquid-glass-studio" target="_blank" rel="noopener">star it ★</a>
+    </p>
+  </footer>
+
+  <!-- toast for copy feedback -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>Copied ✓</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
