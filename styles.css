@@ -231,6 +231,25 @@ input[type="range"] {
   pointer-events: none;
 }
 
+/* highlight when an image is being dragged over the preview */
+.preview-area.drop-target {
+  outline: 3px dashed var(--accent);
+  outline-offset: -14px;
+}
+.preview-area.drop-target::after {
+  content: "drop the image to set it as background";
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 10;
+}
+
 /* ── Export panel ───────────────────────────────────────────── */
 .export-panel {
   margin: 0 24px 24px;

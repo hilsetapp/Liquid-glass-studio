@@ -220,7 +220,18 @@ $('#ctl-tint').addEventListener('input', (e) => {
   refreshExport();
 });
 
-/* ── 7. Preview background (blobs / your own image) ───────────── */
+/* ── 7. Preview background (blobs / sunset / your own image) ──── */
+function useImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) return false;
+  const url = URL.createObjectURL(file); // local only — never leaves the browser
+  const img = $('#bg-image');
+  img.style.backgroundImage = `url(${url})`;
+  img.hidden = false;
+  document.querySelectorAll('.blob').forEach((b) => (b.style.display = 'none'));
+  showToast('background replaced — now tune the glass over it');
+  return true;
+}
+
 document.querySelector('[data-bg="blobs"]').addEventListener('click', () => {
   $('#bg-image').hidden = true;
   document.querySelectorAll('.blob').forEach((b) => (b.style.display = ''));
@@ -234,14 +245,32 @@ document.querySelector('[data-bg="sunset"]').addEventListener('click', () => {
 });
 
 $('#bg-upload').addEventListener('change', (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = $('#bg-image');
-  img.style.backgroundImage = `url(${url})`;
-  img.hidden = false;
-  document.querySelectorAll('.blob').forEach((b) => (b.style.display = 'none'));
-  showToast('background replaced');
+  useImageFile(e.target.files && e.target.files[0]);
+});
+
+/* ── 7b. Faster background swap: drag & drop + paste ────────────
+   Real-world use case: you screenshot YOUR site, drop or paste it
+   here, and tune the glass on top of your actual design. */
+
+// drag & drop an image file onto the preview area
+['dragenter', 'dragover'].forEach((ev) =>
+  previewArea.addEventListener(ev, (e) => {
+    e.preventDefault();
+    previewArea.classList.add('drop-target');
+  }));
+['dragleave', 'drop'].forEach((ev) =>
+  previewArea.addEventListener(ev, (e) => {
+    e.preventDefault();
+    previewArea.classList.remove('drop-target');
+  }));
+previewArea.addEventListener('drop', (e) => {
+  useImageFile(e.dataTransfer?.files?.[0]);
+});
+
+// paste a screenshot with Ctrl/Cmd+V anywhere on the page
+window.addEventListener('paste', (e) => {
+  const file = e.clipboardData?.files?.[0];
+  if (file && useImageFile(file)) e.preventDefault();
 });
 
 /* ── 8. Drag the glass panel (the fun part) ───────────────────── */

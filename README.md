@@ -41,7 +41,7 @@ no design degree required.
 - 🧲 **Draggable live preview** — pull the panel across colorful blobs and watch the light bend
 - 💧 **Optional edge refraction** via an embedded SVG displacement filter (the wow-detail almost nobody implements)
 - 🎨 **6 one-click presets** — iOS Dock, Frosted, Thick lens, Dark smoke, Rose glass, Neon edge
-- 🖼 **Your own background** — upload any image to test the glass on real content
+- 🖼 **Your own background** — upload, drag-and-drop or paste (Ctrl+V) any image, e.g. a screenshot of *your* site, to tune the glass on your real design
 - 📋 **Export as CSS or Tailwind** with a one-click copy button
 - 🎲 **"Surprise me" randomizer** for inspiration
 - 📚 **Plain-words "How it works" section** built into the page (great for learning!)
