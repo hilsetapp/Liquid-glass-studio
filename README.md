@@ -5,7 +5,7 @@
 <h1 align="center">Liquid Glass Studio</h1>
 
 <p align="center">
-  <strong>Design Apple's iOS 26 "liquid glass" effect visually — copy the CSS in one click.</strong><br>
+  <strong>Design Apple's iOS 26 "liquid glass" effect visually - copy the CSS in one click.</strong><br>
   No sign-up, no build step, no dependencies. Just open and play.
 </p>
 
@@ -37,11 +37,11 @@ no design degree required.
 
 ## Features
 
-- 🎛 **7 fine-tuned controls** — blur, milkiness, saturation, radius, depth, edge light, refraction bend
-- 🧲 **Draggable live preview** — pull the panel across colorful blobs and watch the light bend
+- 🎛 **7 fine-tuned controls** - blur, milkiness, saturation, radius, depth, edge light, refraction bend
+- 🧲 **Draggable live preview** - pull the panel across colorful blobs and watch the light bend
 - 💧 **Optional edge refraction** via an embedded SVG displacement filter (the wow-detail almost nobody implements)
-- 🎨 **6 one-click presets** — iOS Dock, Frosted, Thick lens, Dark smoke, Rose glass, Neon edge
-- 🖼 **Your own background** — upload, drag-and-drop or paste (Ctrl+V) any image, e.g. a screenshot of *your* site, to tune the glass on your real design
+- 🎨 **6 one-click presets** - iOS Dock, Frosted, Thick lens, Dark smoke, Rose glass, Neon edge
+- 🖼 **Your own background** - upload, drag-and-drop or paste (Ctrl+V) any image, e.g. a screenshot of *your* site, to tune the glass on your real design
 - 📋 **Export as CSS or Tailwind** with a one-click copy button
 - 🎲 **"Surprise me" randomizer** for inspiration
 - 📚 **Plain-words "How it works" section** built into the page (great for learning!)
@@ -58,7 +58,7 @@ cd liquid-glass-studio
 npx serve .
 ```
 
-Open it, move the sliders, hit **"Get the code ⚡"**, paste the CSS into your project. Done.
+Open it,move the sliders, hit **"Get the code ⚡"**, paste the CSS into your project. Done.
 
 ## FAQ — the beginner edition
 
