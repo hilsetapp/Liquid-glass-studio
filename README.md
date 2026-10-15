@@ -33,7 +33,7 @@ shadows, displacement filters…). This little web app lets you **drag sliders,
 watch a live preview, and copy production-ready CSS or Tailwind classes** —
 no design degree required.
 
-**Try it: https://hilsetapp.github.io/liquid-glass-studio/**
+**Try it: https://hilsetapp.github.io/Liquid-glass-studio/**
 
 ## Features
 
