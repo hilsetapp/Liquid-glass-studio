@@ -18,4 +18,4 @@ Initial release.
 - Built-in plain-words "How it works" section
 - Automatic deploy to GitHub Pages
 
-[0.1.0]: https://github.com/hilsetapp/liquid-glass-studio/releases/tag/v0.1.0
+[0.1.0]: https://github.com/hilsetapp/Liquid-glass-studio/releases/tag/v0.1.0

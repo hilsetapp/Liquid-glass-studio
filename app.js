@@ -327,7 +327,7 @@ const EXPORTERS = {
     code:
 `/* ── Liquid Glass ─────────────────────────────
    generated with Liquid Glass Studio
-   https://github.com/hilsetapp/liquid-glass-studio */
+   https://github.com/hilsetapp/Liquid-glass-studio */
 .liquid-glass {
   /* frosting + color boost of whatever is behind */
   -webkit-backdrop-filter: ${backdropValue()};
