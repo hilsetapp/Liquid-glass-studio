@@ -2,6 +2,20 @@
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- Preview the same glass settings on a card, button, and navigation bar
+- Copy and reopen a URL that restores slider settings and the selected preview mode
+- Export CSS custom properties for a reusable project theme
+- Include an opaque tint fallback when `backdrop-filter` is unavailable
+
+### Fixed
+
+- Combine Tailwind shadow layers into one class so they do not override each other
+- Respect reduced-motion preferences in the animated preview
+
 ## [0.1.0] - 2026-10-10
 
 Initial release.

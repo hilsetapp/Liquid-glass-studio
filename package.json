@@ -1,0 +1,10 @@
+{
+  "name": "liquid-glass-studio",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

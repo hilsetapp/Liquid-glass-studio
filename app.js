@@ -21,12 +21,12 @@ const state = {
 };
 
 const SLIDERS = [
-  { key: 'blur',        label: 'Blur',             hint: 'the frosting — how strongly the background is blurred', min: 0,   max: 40,  step: 1,    unit: 'px' },
-  { key: 'opacity',     label: 'Milkiness',        hint: 'alpha of the tint — more means thicker, milkier glass',   min: 0.02, max: 0.6, step: 0.01, unit: '' },
-  { key: 'saturation',  label: 'Saturation boost', hint: 'makes colors behind the glass pop (iOS loves ~150–180%)', min: 100, max: 250, step: 5,    unit: '%' },
+  { key: 'blur',        label: 'Blur',             hint: 'strength of the background blur', min: 0,   max: 40,  step: 1,    unit: 'px' },
+  { key: 'opacity',     label: 'Milkiness',        hint: 'tint transparency; higher values make the fill more opaque',   min: 0.02, max: 0.6, step: 0.01, unit: '' },
+  { key: 'saturation',  label: 'Saturation boost', hint: 'increases the color intensity behind the glass', min: 100, max: 250, step: 5,    unit: '%' },
   { key: 'radius',      label: 'Corner radius',    hint: 'roundness of the panel corners',                          min: 0,   max: 40,  step: 1,    unit: 'px' },
   { key: 'shadow',      label: 'Depth shadow',     hint: 'drop shadow that lifts the panel off the background',     min: 0,   max: 80,  step: 2,    unit: 'px' },
-  { key: 'border',      label: 'Edge light',       hint: 'the 1px light caught by the glass edge — the secret sauce', min: 0, max: 1,   step: 0.05, unit: '' },
+  { key: 'border',      label: 'Edge light',       hint: 'intensity of the thin highlight along the edge', min: 0, max: 1,   step: 0.05, unit: '' },
   { key: 'distortion',  label: 'Refraction bend',  hint: 'how strongly light bends (needs refraction enabled)',     min: 0,   max: 30,  step: 1,    unit: '',    needsRefraction: true },
 ];
 
@@ -60,6 +60,58 @@ function hexToRgb(hex) {
 }
 
 const round2 = (n) => Math.round(n * 100) / 100;
+let previewMode = 'card';
+
+function loadSharedSettings() {
+  const params = new URLSearchParams(window.location.search);
+  for (const control of SLIDERS) {
+    const raw = params.get(control.key);
+    if (raw === null) continue;
+    const value = Number(raw);
+    if (!Number.isFinite(value)) continue;
+    const clipped = Math.min(control.max, Math.max(control.min, value));
+    const steps = Math.round((clipped - control.min) / control.step);
+    state[control.key] = Number((control.min + steps * control.step).toFixed(3));
+  }
+  const tint = params.get('tint');
+  if (tint && /^#[0-9a-f]{6}$/i.test(tint)) state.tint = tint;
+  const refraction = params.get('refraction');
+  if (refraction === '1' || refraction === '0') state.refraction = refraction === '1';
+  const mode = params.get('preview');
+  if (['card', 'button', 'nav'].includes(mode)) previewMode = mode;
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.append(field);
+    field.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch { copied = false; }
+    field.remove();
+    return copied;
+  }
+}
+
+async function copySettingsLink() {
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.hash = '';
+  const params = new URLSearchParams();
+  for (const control of SLIDERS) params.set(control.key, String(state[control.key]));
+  params.set('tint', state.tint);
+  params.set('refraction', state.refraction ? '1' : '0');
+  params.set('preview', previewMode);
+  url.search = params.toString();
+  const copied = await copyText(url.toString());
+  showToast(copied ? 'Settings link copied. Local images stay on this device.' : 'Could not copy the link');
+}
 
 /* ── 3. Build the sliders ─────────────────────────────────────── */
 function buildControls() {
@@ -120,6 +172,7 @@ function applyGlass() {
       `inset 0 -1px 0 rgba(255, 255, 255, ${round2(B * 0.35)})`,
     ].join(', '),
   });
+  glassCard.style.setProperty('--sample-radius', `${state.radius}px`);
 }
 
 /* ── 5. Refraction: SVG displacement filter on/off ────────────── */
@@ -183,6 +236,49 @@ function buildPresets() {
   });
 }
 
+const PREVIEW_COMPONENTS = {
+  card: {
+    label: 'Glass card preview',
+    html: `<div class="glass-card-inner">
+      <div class="demo-avatar"></div>
+      <div class="demo-text"><strong>Project update</strong><span>New build is ready to review</span></div>
+      <div class="demo-pill">Ready</div>
+    </div>
+    <div class="glass-card-row"><span></span><span></span><span></span></div>`,
+  },
+  button: {
+    label: 'Glass button preview',
+    html: `<div class="preview-action">Open project <span aria-hidden="true">↗</span></div>`,
+  },
+  nav: {
+    label: 'Glass navigation preview',
+    html: `<div class="preview-nav">
+      <span class="preview-nav-brand">Studio</span>
+      <nav class="preview-nav-links" aria-label="Sample navigation"><span>Work</span><span>Notes</span></nav>
+      <span class="preview-nav-cta">Contact</span>
+    </div>`,
+  },
+};
+
+function setPreviewMode(mode) {
+  const sample = PREVIEW_COMPONENTS[mode];
+  if (!sample) return;
+  previewMode = mode;
+  glassCard.classList.remove('mode-button', 'mode-nav');
+  if (mode !== 'card') glassCard.classList.add(`mode-${mode}`);
+  glassCard.innerHTML = sample.html;
+  glassCard.setAttribute('aria-label', sample.label);
+  document.querySelectorAll('[data-preview-mode]').forEach((button) => {
+    const active = button.dataset.previewMode === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+
+document.querySelectorAll('[data-preview-mode]').forEach((button) => {
+  button.addEventListener('click', () => setPreviewMode(button.dataset.previewMode));
+});
+
 function syncInputsToState() {
   for (const s of SLIDERS) {
     const input = $(`#ctl-${s.key}`);
@@ -214,6 +310,8 @@ $('#btn-random').addEventListener('click', () => {
   showToast('🎲 new random glass');
 });
 
+$('#btn-share').addEventListener('click', copySettingsLink);
+
 $('#ctl-tint').addEventListener('input', (e) => {
   state.tint = e.target.value;
   applyGlass();
@@ -228,7 +326,7 @@ function useImageFile(file) {
   img.style.backgroundImage = `url(${url})`;
   img.hidden = false;
   document.querySelectorAll('.blob').forEach((b) => (b.style.display = 'none'));
-  showToast('background replaced — now tune the glass over it');
+  showToast('Background set. Adjust the glass against it.');
   return true;
 }
 
@@ -310,6 +408,11 @@ function rgbaString() {
   return `rgba(${r}, ${g}, ${b}, ${state.opacity})`;
 }
 
+function solidFallback() {
+  const { r, g, b } = hexToRgb(state.tint);
+  return `rgba(${r}, ${g}, ${b}, 0.92)`;
+}
+
 function shadowString() {
   const B = state.border;
   return [
@@ -322,8 +425,8 @@ function shadowString() {
 const EXPORTERS = {
   css: () => ({
     note: state.refraction
-      ? 'Paste the CSS anywhere. Refraction additionally needs the SVG filter from the "SVG filter" tab — included once per page. Where backdrop-filter: url() is unsupported, browsers simply show the frosted version.'
-      : 'Paste the CSS anywhere. Works in every modern browser.',
+      ? 'Paste the CSS into your project and include the SVG from the filter tab once per page. Browsers without filter URL support keep the frosted glass effect.'
+      : 'Paste the CSS into your project. Browsers without backdrop-filter use the solid tint fallback included below.',
     code:
 `/* ── Liquid Glass ─────────────────────────────
    generated with Liquid Glass Studio
@@ -342,6 +445,38 @@ const EXPORTERS = {
 
   /* depth + light caught at the edges */
   box-shadow: ${shadowString()};
+}
+
+@supports not (backdrop-filter: blur(1px)) and not (-webkit-backdrop-filter: blur(1px)) {
+  .liquid-glass {
+    background: ${solidFallback()};
+  }
+}`,
+  }),
+
+  variables: () => ({
+    note: 'Use these tokens as a small theme layer. The solid tint fallback keeps text readable when backdrop-filter is unavailable.',
+    code:
+`:root {
+  --glass-backdrop: ${backdropValue()};
+  --glass-fill: ${rgbaString()};
+  --glass-solid-fallback: ${solidFallback()};
+  --glass-radius: ${state.radius}px;
+  --glass-edge: rgba(255, 255, 255, ${round2(Math.min(0.8, state.border * 0.55))});
+  --glass-shadow: ${shadowString().replace(/\n\s*/g, ' ')};
+}
+
+.glass-surface {
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  backdrop-filter: var(--glass-backdrop);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+@supports not (backdrop-filter: blur(1px)) and not (-webkit-backdrop-filter: blur(1px)) {
+  .glass-surface { background: var(--glass-solid-fallback); }
 }`,
   }),
 
@@ -353,8 +488,7 @@ const EXPORTERS = {
   `saturate-[${state.saturation}%]`,
   `rounded-[${state.radius}px]`,
   tintClass(),
-  `shadow-[0_8px_${state.shadow}px_rgba(0,0,0,0.35)]`,
-  `shadow-[inset_0_1px_0_rgba(255,255,255,${round2(state.border)})]`,
+  `shadow-[0_8px_${state.shadow}px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,${round2(state.border)}),inset_0_-1px_0_rgba(255,255,255,${round2(state.border * 0.35)})]`,
   `border`,
   `border-white/${Math.round(Math.min(0.8, state.border * 0.55) * 100)}`,
 ].join(' ')}">
@@ -410,23 +544,13 @@ function refreshExport() {
 }
 
 $('#btn-copy').addEventListener('click', async () => {
-  const text = $('#export-code').textContent;
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast('Copied ✓');
-  } catch {
-    // fallback for file:// pages or older browsers
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.append(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-    showToast('Copied ✓');
-  }
+  const copied = await copyText($('#export-code').textContent);
+  showToast(copied ? 'Copied ✓' : 'Could not copy the code');
 });
 
 /* ── 11. Boot ─────────────────────────────────────────────────── */
+loadSharedSettings();
 buildControls();
 buildPresets();
+setPreviewMode(previewMode);
 applyGlass();

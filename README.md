@@ -7,83 +7,52 @@
 <h1 align="center">Liquid Glass Studio</h1>
 
 <p align="center">
-  <strong>Design Apple's iOS 26 "liquid glass" effect visually - copy the CSS in one click.</strong><br>
-  No sign-up, no build step, no dependencies. Just open and play.
+  <strong>I built a browser tool for tuning frosted-glass effects and copying the result into a project.</strong><br>
+  No account, setup, or build step required.
 </p>
 
 <p align="center">
   <a href="https://hilsetapp.github.io/Liquid-glass-studio/"><img src="https://img.shields.io/badge/▶_live_demo-hilsetapp.github.io%2Fliquid--glass--studio-22d3ee" alt="Live demo"></a>
-  <a href="https://github.com/hilsetapp/Liquid-glass-studio/actions/workflows/pages.yml"><img src="https://github.com/hilsetapp/Liquid-glass-studio/actions/workflows/pages.yml/badge.svg" alt="pages deploy"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="license: MIT"></a>
-  <img src="https://img.shields.io/badge/build-none_vanilla_js-brightgreen" alt="no build step">
+  <a href="https://github.com/hilsetapp/Liquid-glass-studio/actions/workflows/pages.yml"><img src="https://github.com/hilsetapp/Liquid-glass-studio/actions/workflows/pages.yml/badge.svg" alt="Pages deploy"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
 </p>
 
----
+## Why I made it
 
-## What is this?
+I kept adjusting `backdrop-filter`, tint, edge light, and shadow by hand while building interfaces. I made this page so I can tune those values against a real screenshot, check a few common component shapes, and copy the CSS instead of guessing.
 
-You know those see-through, frosted panels in iOS 26 - where the background
-shines through, blurred and bent, with a thin light running along the edge?
-That design language is called **Liquid Glass**.
+**[Open Liquid Glass Studio](https://hilsetapp.github.io/Liquid-glass-studio/)**
 
-Recreating it in CSS by hand is fiddly (`backdrop-filter` values, inset
-shadows, displacement filters…). This little web app lets you **drag sliders,
-watch a live preview, and copy production-ready CSS or Tailwind classes** -
-no design degree required.
+## What I can do with it
 
-**Try it: https://hilsetapp.github.io/Liquid-glass-studio/**
+- Tune blur, tint, saturation, corner radius, shadow, edge light, and optional refraction.
+- Compare the same settings on a card, button, or navigation preview.
+- Use one of six starting presets, then adjust every value.
+- Drop in or paste a screenshot. It stays in the browser and is not included in a shared link.
+- Copy a share link that restores the current settings.
+- Export plain CSS, CSS variables for a small design system, Tailwind classes, or the optional SVG filter.
+- Use the generated CSS fallback when a browser does not support `backdrop-filter`.
 
-## Features
+Refraction uses an SVG displacement filter and remains experimental. The glass still works without it.
 
-- 🎛 **7 fine-tuned controls** - blur, milkiness, saturation, radius, depth, edge light, refraction bend
-- 🧲 **Draggable live preview** - pull the panel across colorful blobs and watch the light bend
-- 💧 **Optional edge refraction** via an embedded SVG displacement filter (the wow-detail almost nobody implements)
-- 🎨 **6 one-click presets** - iOS Dock, Frosted, Thick lens, Dark smoke, Rose glass, Neon edge
-- 🖼 **Your own background** - upload, drag-and-drop or paste (Ctrl+V) any image, e.g. a screenshot of *your* site, to tune the glass on your real design
-- 📋 **Export as CSS or Tailwind** with a one-click copy button
-- 🎲 **"Surprise me" randomizer** for inspiration
-- 📚 **Plain-words "How it works" section** built into the page (great for learning!)
-- ⚡ **Zero dependencies, zero build** - one HTML file, one CSS file, one JS file
+## Run locally
 
-## Quick start
-
-It's a static page - nothing to install:
+The app has no build step or third-party runtime dependencies:
 
 ```bash
 git clone https://github.com/hilsetapp/Liquid-glass-studio.git
-cd liquid-glass-studio
-# then either just open index.html in your browser, or serve it:
-npx serve .
+cd Liquid-glass-studio
+python3 -m http.server 8000
 ```
 
-Open it,move the sliders, hit **"Get the code ⚡"**, paste the CSS into your project. Done.
-
-## FAQ - the beginner edition
-
-**Do I need Node, npm or a framework to use the output?**
-No. The generated CSS is plain CSS. It works in any project - plain HTML,
-React, Vue, WordPress, whatever.
-
-**Where does the refraction work?**
-`backdrop-filter` is supported in every modern browser. The optional SVG
-refraction filter works in Safari and in Chromium with experimental web
-features enabled. Where it's unsupported, the panel gracefully looks like
-classic frosted glass - nothing breaks.
-
-**Is it really free?**
-MIT licensed. Use the generated CSS anywhere, forever.
+Open <http://localhost:8000>. You can also open `index.html` directly.
 
 ## For contributors
 
-The whole app is three files (`index.html`, `styles.css`, `app.js`) with
-commented vanilla code - a perfect first open-source contribution target.
-Ideas: more presets, gradient tint mode, `prefers-reduced-motion` handling,
-React/Vue export snippets. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-Deploys automatically to GitHub Pages on every push to `main`.
-
-If this saved you time, **star the repo ★** - it helps others find it.
+I welcome bug reports and focused pull requests. The runtime is plain HTML, CSS, and JavaScript. Run `npm test` to check the settings links, preview modes, and exports. It uses Node's built-in test runner and installs no packages. See [CONTRIBUTING.md](CONTRIBUTING.md) before changing the files.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). Use the generated code in your projects.
+
+If the tool is useful to you, a star helps other developers find it.
