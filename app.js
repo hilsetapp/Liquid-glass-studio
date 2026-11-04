@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Liquid Glass Studio — app logic (vanilla JS, no build step)
+   Liquid Glass Studio - app logic (vanilla JS, no build step)
    Everything the sliders change is kept in one tiny state object,
    turned into CSS by applyGlass() and into copy-paste snippets
    by the exporters below. That is the whole app. 🙂
@@ -9,12 +9,12 @@
 
 /* ── 1. State ─────────────────────────────────────────────────── */
 const state = {
-  blur: 16,        // px — frosting intensity
-  opacity: 0.18,   // 0..1 — tint alpha (how "milky" the glass is)
-  saturation: 160, // % — color boost of whatever is behind the glass
-  radius: 24,      // px — corner roundness
-  shadow: 32,      // px — drop shadow blur (depth)
-  border: 0.6,     // 0..1 — edge light intensity
+  blur: 16,        // px - frosting intensity
+  opacity: 0.18,   // 0..1 - tint alpha (how "milky" the glass is)
+  saturation: 160, // % - color boost of whatever is behind the glass
+  radius: 24,      // px - corner roundness
+  shadow: 32,      // px - drop shadow blur (depth)
+  border: 0.6,     // 0..1 - edge light intensity
   tint: '#ffffff', // glass material color
   refraction: false,
   distortion: 12,  // feDisplacementMap scale (visual bend amount)
@@ -321,7 +321,7 @@ $('#ctl-tint').addEventListener('input', (e) => {
 /* ── 7. Preview background (blobs / sunset / your own image) ──── */
 function useImageFile(file) {
   if (!file || !file.type.startsWith('image/')) return false;
-  const url = URL.createObjectURL(file); // local only — never leaves the browser
+  const url = URL.createObjectURL(file); // local only - never leaves the browser
   const img = $('#bg-image');
   img.style.backgroundImage = `url(${url})`;
   img.hidden = false;
